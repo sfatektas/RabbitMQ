@@ -4,34 +4,12 @@
 
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQ.Consumer;
 using System.Text;
 
-//Bağlantı Oluşturma 
-ConnectionFactory factory = new ConnectionFactory();
-factory.Uri = new Uri("amqps://xamohava:spM7OwkS3NfNFbE9e8K5naFn_UW3fPWq@shrimp.rmq.cloudamqp.com/xamohava");
 
-//Bağlantı Aktifleştirme kanal açma 
-using IConnection connection = factory.CreateConnection(); //disposaable bir nesne
-using IModel channel = connection.CreateModel();
+var consumer = new DefaultConsumer();
+//var consumer = new ConsumerWithAcknowledge();
 
-//Queue Oluşturma
-channel.QueueDeclare(queue: "example-messageQueue", exclusive: false);
-//exclusive değeri publisher ile aynı yapılandırmada olmalı.
+consumer.Consume();
 
-//ilgili channele tanımlı bir event tanımlıyoruz.
-EventingBasicConsumer consumer = new(channel);
-channel.BasicConsume(queue: "example-messageQueue", autoAck: true, consumer);
-
-//Kuyruğa yeni bir mesaj geldiğinde çalışacak olan fonksiyon.
-//consumer.Received += (sender, e) =>
-//{
-//    Console.WriteLine($"{Encoding.UTF8.GetString(e.Body.Span.ToArray())}");
-//};
-
-//Bir diğer event kullanımı
-consumer.Received += HandleMessage;
-void HandleMessage(object sender, BasicDeliverEventArgs e)
-{
-    Console.WriteLine($"{Encoding.UTF8.GetString(e.Body.Span.ToArray())}");
-}
-Console.Read();

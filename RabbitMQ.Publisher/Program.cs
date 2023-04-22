@@ -24,10 +24,13 @@ channel.QueueDeclare("example-messageQueue", exclusive: false); // excluesive sa
 
 //Queue'ye mesajı publish etme 
 
-byte[] message = Encoding.UTF8.GetBytes("First Publish message");
 
-channel.BasicPublish(exchange: "", routingKey: "example-messageQueue", body: message);
-Console.WriteLine("message publish edildi.");
+for (int i = 0; i < 100; i++)
+{
+    byte[] message = Encoding.UTF8.GetBytes($"Publish message {i+1}");
+    channel.BasicPublish(exchange: "", routingKey: "example-messageQueue", body: message);
+    Console.WriteLine($"message {i+1} publish edildi.");
+}
 
 //eğer default olarak exchange boş geçilir ise rabbitMQ direct exchange yaklaşımı kabul eder.
 //direct exchange yapısında routuing key değeri queue ismine denk gelir.
